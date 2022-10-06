@@ -1,0 +1,22 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "suzakuwcx@gmail.com",
+                "Name": "Chuxuan_windy"
+            }
+        ],
+        "Category": "Utilities",
+        "Description": "Task scheduler",
+        "Icon": "financial-list",
+        "Id": "com.suzakuwcx.todonext",
+        "Name": "TodoNext",
+        "ServiceTypes": [
+            "Plasma/Applet"
+        ],
+        "Version": "1.0",
+        "Website": "https://github.com/suzakuwcx/TodoNext"
+    },
+    "X-Plasma-API": "declarativeappletscript",
+    "X-Plasma-MainScript": "ui/main.qml"
+}
