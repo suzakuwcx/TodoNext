@@ -35,7 +35,7 @@ Item {
         anchors.top: parent.top
     }
     PlasmaComponents3.ToolButton {
-        id: inputButton
+        id: addButton
 
         visible: true
         icon.name: "cursor-cross"
@@ -44,9 +44,9 @@ Item {
         anchors.right: parent.right
         anchors.verticalCenter: taskLabel.verticalCenter
         
-        // onClicked: {
-        //     
-        // }
+        onClicked: {
+            addDialog.visible = true
+        }
     }
     Column {
         id: column
@@ -55,13 +55,15 @@ Item {
         anchors.bottom: parent.bottom
 
         PlasmaComponents3.ToolButton {
+            id: pushButton
+
             visible: true
             icon.name: "gnumeric-format-valign-bottom"
             text: i18n("Push")
             
-            // onClicked: {
-            //     
-            // }
+            onClicked: {
+                pushDialog.visible = true
+            }
         }
         PlasmaComponents3.ToolButton {
             visible: true
@@ -94,6 +96,119 @@ Item {
             background: Item {
                 anchors.fill: parent
             }
-        }            
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    taskDialog.visible = true;
+                }                
+
+                PlasmaCore.Dialog {
+                    id: taskDialog
+                    visible: false
+                    hideOnWindowDeactivate: true
+                    flags: PlasmaCore.Dialog.Normal
+                    visualParent: task
+
+                    mainItem: ListDialog {
+                        title: "Placeholder"
+                        minimumWidth: PlasmaCore.Units.gridUnit * 15
+                        minimumHeight: PlasmaCore.Units.gridUnit * 15
+                        mainItem: ListView {
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.bottom: parent.bottom
+                            
+
+                            model: ListModel {
+                                id : childModel
+                                ListElement {
+                                    name: "Placeholder"
+                                }
+                                ListElement {
+                                    name: "Placeholder"
+                                }
+                                ListElement {
+                                    name: "Placeholder"
+                                }
+                            }
+
+                            delegate: PlasmaComponents3.Label {
+                                font.pixelSize: 18
+                                text: i18n(" ├─ " +name)
+                            }
+                        }
+                    }
+                }                
+            }            
+        }
+    }
+// invisible UI components
+    PlasmaCore.Dialog {
+        id: pushDialog
+
+        visible: false
+        hideOnWindowDeactivate: true
+        flags: PlasmaCore.Dialog.Normal
+        visualParent: pushButton
+
+        mainItem: Row {
+            PlasmaComponents3.TextField {
+            }
+            PlasmaComponents3.ToolButton {
+                icon.name: "gnumeric-format-valign-bottom"
+                text: i18n("Push")
+            }
+        }
+    }
+
+    PlasmaCore.Dialog {
+        id: addDialog
+
+        visible: false
+        hideOnWindowDeactivate: true
+        flags: PlasmaCore.Dialog.Normal
+        visualParent: addButton
+
+        mainItem: ListDialog {
+            title: "Placeholder"
+            minimumWidth: PlasmaCore.Units.gridUnit * 15
+            minimumHeight: PlasmaCore.Units.gridUnit * 15
+            mainItem: ListView {
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                
+
+                model: ListModel {
+                    id : childModel
+                    ListElement {
+                        name: "Placeholder"
+                    }
+                    ListElement {
+                        name: "Placeholder"
+                    }
+                    ListElement {
+                        name: "Placeholder"
+                    }
+                }
+
+                delegate: PlasmaComponents3.ToolButton {
+                    width: parent.width
+                    contentItem: PlasmaComponents3.Label {
+                        font.pixelSize: 18
+                        text: name
+                        elide: Text.ElideRight
+                        horizontalAlignment : Text.AlignLeft
+                    }
+
+                    // onClicked: {
+                        
+                    // }
+                }
+            }
+        }
     }
 }
