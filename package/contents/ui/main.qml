@@ -153,12 +153,107 @@ Item {
         flags: PlasmaCore.Dialog.Normal
         visualParent: pushButton
 
-        mainItem: Row {
-            PlasmaComponents3.TextField {
-            }
-            PlasmaComponents3.ToolButton {
-                icon.name: "gnumeric-format-valign-bottom"
-                text: i18n("Push")
+        mainItem: ListDialog {
+            title: "Placeholder"
+            minimumWidth: PlasmaCore.Units.gridUnit * 15
+            minimumHeight: PlasmaCore.Units.gridUnit * 15
+            mainItem: Item {
+                ListView {
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: dialogPushButtonRow.top
+                    
+
+                    model: ListModel {
+                        id : childModel
+                        ListElement {
+                            name: "Placeholder"
+                        }
+                        ListElement {
+                            name: "Placeholder"
+                        }
+                        ListElement {
+                            name: "Placeholder"
+                        }
+                        ListElement {
+                            name: "Placeholder"
+                        }
+                        ListElement {
+                            name: "Placeholder"
+                        }
+                        ListElement {
+                            name: "Placeholder"
+                        }
+                        ListElement {
+                            name: "Placeholder"
+                        }
+                        ListElement {
+                            name: "Placeholder"
+                        }
+                    }
+
+                    delegate: PlasmaComponents3.ToolButton {
+                        width: parent.width
+                        contentItem: PlasmaComponents3.Label {
+                            font.pixelSize: 18
+                            text: name
+                            elide: Text.ElideRight
+                            horizontalAlignment : Text.AlignLeft
+                        }
+
+                        // onClicked: {
+                            
+                        // }
+                    }
+                }
+                Item {
+                    id: dialogPushButtonRow
+
+                    anchors.bottom: parent.bottom
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+
+                    height: PlasmaCore.Units.gridUnit * 5
+
+
+                    PlasmaComponents3.TextField {
+                        anchors.bottom: dialogPushButtonAdd.top
+                        anchors.left: parent.left
+                        anchors.right: dialogPushButtonPush.left
+
+                        placeholderText: i18n("SubTask")
+                    }
+
+                    PlasmaComponents3.ToolButton {
+                        id: dialogPushButtonAdd
+
+                        anchors.left: parent.left
+                        anchors.bottom: parent.bottom
+
+                        visible: true
+                        icon.name: "cursor-cross"
+                        // text: i18n("Add")
+
+                        // onClicked: {
+                            
+                        // }
+                    }
+                    PlasmaComponents3.ToolButton {
+                        id: dialogPushButtonPush
+
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+
+                        visible: true
+                        icon.name: "dialog-ok"
+                        text: i18n("Push")
+
+                        // onClicked: {
+                            
+                        // }
+                    }
+                }
             }
         }
     }
