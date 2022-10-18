@@ -1,0 +1,7 @@
+root --> 1 , 缩进0
+├─libidn2 --> 2 , 缩进2
+│ ├─libunistring --> 3 缩进4
+│ └─libunistring
+└─libunistring
+root2
+    

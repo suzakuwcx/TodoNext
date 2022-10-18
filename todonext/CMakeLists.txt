@@ -3,7 +3,7 @@ set(PLUGIN_NAME todonext)
 set(PLUGIN_SRC
     todonextplugin.cpp
     todonext.cpp
-    default_scheduler.cpp
+    defaulttask.cpp
     )
 
 add_library(${PLUGIN_NAME} SHARED ${PLUGIN_SRC})

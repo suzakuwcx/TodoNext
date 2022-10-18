@@ -3,13 +3,45 @@
 
 #include <string>
 #include <vector>
+#include <QString>
+#include <QFile>
+#include <QTextStream>
 
-struct Task
+class Task
 {
-    std::string task_name;
+public:
+enum TokenType {
+    TAP, END_TAP, VALUE, NEWLINE
+};
+
+struct Token
+{
+    TokenType type;
+    QString str;
+};
+
+private:
+    QString task_name;
     // time_t submit_time;
     std::vector<Task*> children;
     Task* father;
+private:
+    QFile* task_file;
+public:
+    Task();
+    Task(const Task& task);
+    Task(const QString &task_name);
+    ~Task();
+private:
+    void create_task_file();
+public:
+    QString getName();
+    Task* getFather();
+    Task* addChildren(const Task &task);
+    void save();
+    void load();
+private:
+    void _save(int level, std::vector<bool> &is_last, QTextStream &out);
 };
 
 #endif
