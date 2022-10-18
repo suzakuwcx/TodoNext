@@ -38,6 +38,8 @@ public:
     QString getName();
     Task* getFather();
     Task* addChildren(const Task &task);
+    Task* getChildrenByIndex(int index);
+    std::vector<Task*> getChildren();
     void save();
     void load();
 private:

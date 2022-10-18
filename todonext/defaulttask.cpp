@@ -40,6 +40,11 @@ Task::~Task()
     delete this->task_file;
 }
 
+QString Task::getName()
+{
+    return this->task_name;
+}
+
 Task* Task::getFather()
 {
     return this->father;
@@ -51,6 +56,18 @@ Task* Task::addChildren(const Task &task)
     child_task->father = this;
     children.push_back(child_task);
     return child_task;
+}
+
+std::vector<Task*> Task::getChildren()
+{
+    return this->children;
+}
+
+Task* Task::getChildrenByIndex(int index)
+{
+    if (index < 0 || index >= (this->children).size())
+        return nullptr;
+    return (this->children)[index];
 }
 
 void Task::load()
