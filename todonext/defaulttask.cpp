@@ -63,7 +63,7 @@ std::vector<Task*> Task::getChildren()
     return this->children;
 }
 
-Task* Task::getChildrenByIndex(int index)
+Task* Task::getChildByIndex(int index)
 {
     if (index < 0 || index >= (this->children).size())
         return nullptr;
@@ -239,13 +239,11 @@ void Task::save()
             is_last[0] = false;
         (children[i])->_save(0, is_last, out);
     }
-    qDebug() << "save" << Qt::endl;
     this->task_file->close();
 }
 
 void Task::_save(int level, std::vector<bool> &is_last, QTextStream &out)
 {
-    qDebug() << "_save" << Qt::endl;
     for (int i = 0; i < level; ++i) {
         if (i == level - 1) {
             if (is_last[level])

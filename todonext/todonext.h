@@ -21,7 +21,11 @@ public:
     Q_INVOKABLE void submit(QString sub_task_name);
     Q_INVOKABLE QString getTaskName();
     Q_INVOKABLE QStringList getSubTaskTreePath();
+    Q_INVOKABLE QString getTaskName(QString tree_path);
+    Q_INVOKABLE QStringList getSubTaskTreePath(QString tree_path);
     Q_INVOKABLE void setCurrentTask(QString tree_path);
+private:
+    Task* parseTreePath(QString tree_path);
 };
 
 #endif
