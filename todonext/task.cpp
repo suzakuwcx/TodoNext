@@ -1,71 +1,101 @@
 #include "task.h"
-#include <iostream>
-#include <vector>
+#include <QString>
+#include <QList>
+#include <QSharedData>
 #include <QStandardPaths>
-#include <QDir>
 #include <QTextStream>
-#include <QChar>
+#include <QDir>
 #include <QDebug>
 
-Task::Task() : task_name("default"), father(nullptr)
-{
-    create_task_file();
-}
+enum TokenType {
+    TAP, END_TAP, VALUE, NEWLINE
+};
 
-Task::Task(const Task& task): task_name(task.task_name), father(task.father), children(task.children)
+struct Token
 {
-    create_task_file();
-}
+    TokenType type;
+    QString str;
+};
 
-Task::Task(const QString &task_name)
-{
-    this->father = nullptr;
-    this->task_name = task_name;
-    create_task_file();
-}
-
-void Task::create_task_file()
+Task::Task() 
 {
     const QString genericDataLocation = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
     const QString suffix = QStringLiteral("TodoNext");
     QDir(genericDataLocation).mkdir(suffix);
-    this->task_file = new QFile(genericDataLocation + QDir::separator() + suffix + QDir::separator() + "task.txt");
+    this->task_list_path = QString(genericDataLocation + QDir::separator() + suffix + QDir::separator() + "task.txt");
+    this->task_finish_path = QString(genericDataLocation + QDir::separator() + suffix + QDir::separator() + "finish.txt");
+
+    this->task_name = QString("default");
 }
 
 Task::~Task()
 {
-    for (int i = 0; i < children.size(); ++i) {
-        delete children[i];
+    for (AbstractTask* t : task_children){
+        delete t;
     }
-    delete this->task_file;
 }
 
-Task* Task::getFather()
+QString Task::getTaskName()
+{
+    return this->task_name;
+}
+
+bool Task::setTaskName(QString n_task_name)
+{
+    this->task_name = n_task_name;
+    return true;
+}
+
+bool Task::addTaskProperties(QString key, QString value)
+{
+    return false;
+}
+
+QList<QString> Task::getTaskProperties(QString key)
+{
+    return QList<QString>();
+}
+
+int Task::getChildrenNum()
+{
+    return (this->task_children).size();
+}
+
+AbstractTask* Task::addChild(AbstractTask* child)
+{
+    (this->task_children).push_back(child);
+    return child;
+}
+
+AbstractTask* Task::getChildByIndex(int index)
+{
+    return (this->task_children).value(index, nullptr);
+}
+
+AbstractTask* Task::getFather()
 {
     return this->father;
 }
 
-Task* Task::addChildren(const Task &task)
+bool Task::load()
 {
-    Task* child_task = new Task(task);
-    child_task->father = this;
-    children.push_back(child_task);
-    return child_task;
-}
 
-void Task::load()
-{
-    if(!this->task_file->open(QIODevice::ReadOnly | QIODevice::Text)) {
-        std::cerr << "file " + this->task_file->fileName().toStdString() + " not found" << std::endl;
-        return;            
+    if (this->father != nullptr)
+        return this->father->load();
+
+    QFile task_file(this->task_list_path);
+
+    if(!task_file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return false;
     }
+
     // file stream
-    QTextStream in(this->task_file);
+    QTextStream in(&task_file);
     // top task
     Task* top = this;
     int top_level = -1;
     int current_level = 0;
-    std::vector<Token> token_lists;
+    QList<Token> token_lists;
     // error handler
     int line_num = 0;
     QChar error_token;
@@ -163,22 +193,22 @@ void Task::load()
         else
         if (token_lists[i].type == TokenType::VALUE) {
             if (current_level - top_level == 1) {
-                Task t;
-                t.task_name = token_lists[i].str;
-                t.father = top;
-                top = top->addChildren(t);
+                Task* t = new Task();
+                t->task_name = token_lists[i].str;
+                t->father = top;
+                top = (Task* )top->addChild(t);
                 top_level = current_level;
                 current_level = 0;
             }
             else
             if (current_level <= top_level) {
                 for (int i = 0;i <= top_level - current_level; ++i) {
-                    top = top->father;
+                    top = (Task* )top->father;
                 }
-                Task t;
-                t.task_name = token_lists[i].str;
-                t.father = top;
-                top = top->addChildren(t);
+                Task* t = new Task();
+                t->task_name = token_lists[i].str;
+                t->father = top;
+                top = (Task* )top->addChild(t);
                 top_level = current_level;
                 current_level = 0;
             }
@@ -189,71 +219,20 @@ void Task::load()
         }
         else {
             qWarning() << "Invalid" << Qt::endl;
-            return;
+            return false;
         }
     }
 
-    return;
+    return true;
     EToken:
         qWarning() << "Error on parsing token: " << error_token << " at line " << line_num << Qt::endl;
-        return;
+        return false;
     EGrammar:
         qWarning() << "Error on token: " << error_token << Qt::endl;
-        return;
+        return false;
 }
 
-void Task::save()
+bool Task::save()
 {
-    std::vector<bool> is_last;
-    if (!(this->task_file->open(QIODevice::WriteOnly | QIODevice::Text)))
-        return;
-    QTextStream out(this->task_file);
-
-    if (father != nullptr) {
-        std::cerr << "This task is not root task, exit" << std::endl;
-        return;
-    }
-
-    is_last.push_back(false);
-    for (int i = 0; i < children.size(); ++i) {
-        if ( i == (children.size() - 1))
-            is_last[0] = true;
-        else
-            is_last[0] = false;
-        (children[i])->_save(0, is_last, out);
-    }
-    qDebug() << "save" << Qt::endl;
-    this->task_file->close();
-}
-
-void Task::_save(int level, std::vector<bool> &is_last, QTextStream &out)
-{
-    qDebug() << "_save" << Qt::endl;
-    for (int i = 0; i < level; ++i) {
-        if (i == level - 1) {
-            if (is_last[level])
-                out << "└─";
-            else
-                out << "├─";
-        }
-        else {
-            if (is_last[i + 1])
-                out << "  ";
-            else
-                out << "│ ";
-        }
-    }
-
-    out << task_name << Qt::endl;
-
-    if (level + 2 > is_last.size())
-        is_last.push_back(false);
-
-    for (int i = 0; i < children.size(); ++i) {
-        if (i == (children.size() - 1))
-            is_last[level + 1] = true;
-        else
-            is_last[level + 1] = false;
-        (children[i])->_save(level + 1, is_last, out);
-    }
+    return true;
 }
