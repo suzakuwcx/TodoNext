@@ -1,49 +1,36 @@
 #ifndef TASK_H
 #define TASK_H
 
-#include <string>
-#include <vector>
+#include "abstracttask.h"
+#include <QObject>
+#include <QDir>
 #include <QString>
-#include <QFile>
-#include <QTextStream>
+#include <QList>
 
-class Task
+class Task : public AbstractTask
 {
-public:
-enum TokenType {
-    TAP, END_TAP, VALUE, NEWLINE
-};
-
-struct Token
-{
-    TokenType type;
-    QString str;
-};
-
+    Q_OBJECT
 private:
-    QString task_name;
-    // time_t submit_time;
-    std::vector<Task*> children;
-    Task* father;
-private:
-    QFile* task_file;
+    QString task_list_path;
+    QString task_finish_path;
+
 public:
     Task();
-    Task(const Task& task);
-    Task(const QString &task_name);
     ~Task();
-private:
-    void create_task_file();
-public:
-    QString getName();
-    Task* getFather();
-    Task* addChildren(const Task &task);
-    Task* getChildByIndex(int index);
-    std::vector<Task*> getChildren();
-    void save();
-    void load();
-private:
-    void _save(int level, std::vector<bool> &is_last, QTextStream &out);
+
+    QString getTaskName();
+    bool setTaskName(QString n_task_name);
+
+    bool addTaskProperties(QString key, QString value);
+    QList<QString> getTaskProperties(QString key);
+
+    int getChildrenNum();
+    AbstractTask* addChild(AbstractTask* child);
+    AbstractTask* getChildByIndex(int index);
+    AbstractTask* getFather();
+
+    bool load();
+    bool save();
 };
 
 #endif

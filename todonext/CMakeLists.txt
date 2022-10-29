@@ -2,8 +2,9 @@ set(PLUGIN_NAME todonext)
 
 set(PLUGIN_SRC
     todonextplugin.cpp
+    task.cpp
     todonext.cpp
-    defaulttask.cpp
+    abstracttask.h
     )
 
 add_library(${PLUGIN_NAME} SHARED ${PLUGIN_SRC})

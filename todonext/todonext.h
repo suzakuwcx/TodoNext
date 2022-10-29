@@ -2,30 +2,18 @@
 #define TODONEXT_H
 
 #include <QObject>
-#include <QStringList>
+#include <QString>
 #include "task.h"
 
 class TodoNext : public QObject
 {
     Q_OBJECT
-private:
-    Task root_task;
-    Task* current_task;
-    QString tree_path;
 public:
-    TodoNext(QObject *parent = nullptr);
-    ~TodoNext() override;
+    TodoNext();
+    ~TodoNext();
 
-    Q_INVOKABLE void load();
-    Q_INVOKABLE void save();
-    Q_INVOKABLE void submit(QString sub_task_name);
-    Q_INVOKABLE QString getTaskName();
-    Q_INVOKABLE QStringList getSubTaskTreePath();
-    Q_INVOKABLE QString getTaskName(QString tree_path);
-    Q_INVOKABLE QStringList getSubTaskTreePath(QString tree_path);
-    Q_INVOKABLE void setCurrentTask(QString tree_path);
-private:
-    Task* parseTreePath(QString tree_path);
+    Q_INVOKABLE AbstractTask* getDefaultTask();
+    Q_INVOKABLE AbstractTask* getCurrentTask(QString path);
 };
 
 #endif

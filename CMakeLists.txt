@@ -4,6 +4,7 @@ project(todonext VERSION 1.0)
 
 find_package(ECM 1.4.0 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set (CMAKE_CXX_STANDARD 14)
 
 # add 'make uninstall' target
 include(ECMUninstallTarget)
